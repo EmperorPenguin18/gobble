@@ -5,7 +5,7 @@ pkgdesc='Window swallowing on any WM'
 arch=('x86_64')
 url='https://github.com/EmperorPenguin18/gobble/'
 license=('GPL3')
-depends('libx11')
+depends('libxcb')
 makedepends=('rust')
 
 build () {
