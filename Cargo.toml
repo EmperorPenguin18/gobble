@@ -1,0 +1,19 @@
+[package]
+name = "gobble"
+version = "1.0.0"
+authors = ["Sebastien MacDougall-Landry"]
+repository = "https://github.com/EmperorPenguin18/gobble"
+license = "GPL3"
+
+[dependencies]
+xcb = "0.9"
+
+[[bin]]
+name = "gobble"
+path = "gobble.rs"
+
+[profile.dev]
+debug = false
+
+[profile.release]
+lto = true
