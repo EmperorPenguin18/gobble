@@ -13,6 +13,7 @@ Arch
 git clone https://github.com/EmperorPenguin18/gobble
 cd gobble
 makepkg
+pacman -U gobble-* #as root
 ```
 
 Other Linux
