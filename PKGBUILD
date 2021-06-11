@@ -5,7 +5,7 @@ pkgdesc='Window swallowing on any WM'
 arch=('x86_64')
 url='https://github.com/EmperorPenguin18/gobble/'
 license=('GPL3')
-depends('libxcb')
+depends=('libxcb')
 makedepends=('rust')
 
 build () {
@@ -17,5 +17,5 @@ build () {
 package () {
   install -Dm644 $startdir/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   mkdir -p "$pkgdir/usr/bin"
-  install -Dm644 $srcdir/gobble "$pkgdir/usr/bin/gobble"
+  install -Dm744 $srcdir/gobble "$pkgdir/usr/bin/gobble"
 }
