@@ -11,7 +11,7 @@ makedepends=('rust')
 build () {
   cd $startdir
   make
-  mv target/debug/gobble $srcdir/gobble
+  mv target/release/gobble $srcdir/gobble
 }
 
 package () {
