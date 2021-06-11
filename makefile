@@ -1,6 +1,6 @@
 build: gobble.rs Cargo.toml
-	cargo build
+	cargo build --release
 
-install: target/debug/gobble
+install: target/release/gobble
 	@mkdir -p /usr/bin/
-	@mv target/debug/gobble /usr/bin/gobble
+	@mv target/release/gobble /usr/bin/gobble
