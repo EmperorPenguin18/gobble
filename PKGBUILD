@@ -17,5 +17,5 @@ build () {
 package () {
   install -Dm644 $startdir/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   mkdir -p "$pkgdir/usr/bin"
-  install -Dm744 $srcdir/gobble "$pkgdir/usr/bin/gobble"
+  install -Dm755 $srcdir/gobble "$pkgdir/usr/bin/gobble"
 }
