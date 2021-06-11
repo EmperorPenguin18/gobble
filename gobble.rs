@@ -8,7 +8,7 @@ use std::{env, process, thread, time};
 fn main() {
     let (conn, _screen_num) = xcb::Connection::connect(None).unwrap();
     let win = xcb::get_input_focus(&conn).get_reply().unwrap().focus();
-    let args: Vec = env::args().collect();
+    let args: Vec<String> = env::args().collect();
     let mut command = process::Command::new(&args[1]);
     command.args(&args[2 .. args.len()]);
 
