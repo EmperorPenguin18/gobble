@@ -30,3 +30,18 @@ make install #as root
 ```
 gobble CMD ...
 ```
+
+## Uninstallation
+
+Arch
+
+```
+pacman -R gobble #as root
+```
+
+Other Linux
+
+```
+cd gobble
+make uninstall #as root
+```
