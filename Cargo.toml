@@ -1,13 +1,13 @@
 [package]
 name = "gobble"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["Sebastien MacDougall-Landry"]
 repository = "https://github.com/EmperorPenguin18/gobble"
 license = "GPL3"
 
 [dependencies]
-xcb = "0.9"
-anyhow = "1.0.41"
+xcb >= "0.9"
+anyhow >= "1.0.41"
 
 [[bin]]
 name = "gobble"
