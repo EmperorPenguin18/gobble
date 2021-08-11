@@ -5,7 +5,7 @@
 use std::{env, fmt, process};
 
 fn main() -> Result<(), anyhow::Error> {
-    let args: Vec = env::args().collect();
+    let args: Vec<String> = env::args().collect();
     let wayland = env::var_os("WAYLAND_DISPLAY");
     
     if wayland == None { // X11
@@ -33,7 +33,7 @@ fn main() -> Result<(), anyhow::Error> {
     }
 }
 
-fn command(args: Vec) -> Result {
+fn command(args: Vec<String>) -> Result<i32, anyhow::Error> {
     let stat: i32 = process::Command::new(&args[1])
         .args(&args[2..])
         .status()?
