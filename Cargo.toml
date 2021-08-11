@@ -6,8 +6,8 @@ repository = "https://github.com/EmperorPenguin18/gobble"
 license = "GPL3"
 
 [dependencies]
-xcb >= "0.9"
-anyhow >= "1.0.41"
+xcb = ">=0.9"
+anyhow = ">=1.0.41"
 
 [[bin]]
 name = "gobble"
