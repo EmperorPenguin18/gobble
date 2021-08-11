@@ -1,5 +1,5 @@
 pkgname='gobble'
-pkgver=1.0
+pkgver=1.1
 pkgrel=1
 pkgdesc='Window swallowing on any WM'
 arch=('x86_64')
