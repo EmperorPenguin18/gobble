@@ -15,7 +15,8 @@ fn main() -> Result<(), anyhow::Error> {
         xcb::unmap_window_checked(&conn, win).request_check()?;
         conn.flush();
         
-        let exit_code = command(args);
+        let exit_code = if args.len() > 1 { command(args) }
+        else { Ok(0) };
         
         xcb::map_window_checked(&conn, win).request_check()?;
         conn.flush();
@@ -25,7 +26,8 @@ fn main() -> Result<(), anyhow::Error> {
             Err(e) => return Err(e),
         };
     } else { // Wayland
-        let exit_code = command(args);
+        let exit_code = if args.len() > 1 { command(args) }
+        else { Ok(0) };
         match exit_code {
             Ok(s) => process::exit(s),
             Err(e) => return Err(e),
