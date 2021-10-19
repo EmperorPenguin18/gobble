@@ -43,5 +43,25 @@ time for I in {0..1000}; do devour printf ' ' 2>/dev/null; done
 echo "Test complete"
 echo
 
+echo "Overlap mode test"
+./target/debug/gobble -o $TERM
+echo "Test complete"
+echo
+
+echo "Testing multiple flags + wrong flags"
+./target/debug/gobble -v -l
+echo "Test complete"
+echo
+
+echo "Testing version flag"
+./target/debug/gobble -v
+echo "Test complete"
+echo
+
+echo "Testing flag in the wrong spot"
+./target/debug/gobble echo -h
+echo "Test complete"
+echo
+
 echo "All tests completed"
 exit 0
