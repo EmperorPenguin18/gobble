@@ -20,5 +20,4 @@ package () {
   install -Dm755 $srcdir/gobble "$pkgdir/usr/bin/gobble"
   mkdir -p "$pkgdir/usr/share/man/man1"
   install -Dm644 $startdir/gobble.1.gz "$pkgdir/usr/share/man/man1/gobble.1.gz"
-  mandb
 }
