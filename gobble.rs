@@ -5,7 +5,7 @@
 use std::{env, process};
 
 fn main() -> Result<(), anyhow::Error> {
-    let args: Vec<String> = env::args().skip(1).collect();
+    let mut args: Vec<String> = env::args().collect();
     let wayland = env::var_os("WAYLAND_DISPLAY");
 
     //Interpret flags
@@ -85,7 +85,7 @@ fn main() -> Result<(), anyhow::Error> {
                 0,
                 0,
             )
-            .get_reply()?;
+            .get_reply()?; //Translates relative position to absolute position
             let geometry = xcb::get_geometry(&conn, win).get_reply()?;
             let values = &vec![
                 (xcb::CONFIG_WINDOW_X as u16, translate.dst_x() as u32),
@@ -111,8 +111,8 @@ fn main() -> Result<(), anyhow::Error> {
 }
 
 fn command(args: &[String]) -> Result<process::Child, anyhow::Error> {
-    let child = process::Command::new(&args[0])
-        .args(&args[1..])
+    let child = process::Command::new(&args[1])
+        .args(&args[2..])
         .spawn()?;
     
     Ok(child)
