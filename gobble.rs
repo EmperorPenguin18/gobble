@@ -69,7 +69,7 @@ fn main() -> Result<(), anyhow::Error> {
         } else {
             let mut child: process::Child;
             if args.len() > 1 {
-                child = command_child(args)?;
+                child = command(&args)?;
             } else {
                 process::exit(0);
             }
