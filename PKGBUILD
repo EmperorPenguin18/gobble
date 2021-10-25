@@ -11,7 +11,7 @@ makedepends=('rust' 'pandoc' 'gzip')
 build () {
   cd $startdir
   make
-  mv target/release/gobble $srcdir/gobble
+  mv -f target/release/gobble $srcdir/gobble
 }
 
 package () {
