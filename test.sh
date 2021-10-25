@@ -6,7 +6,7 @@ echo "Compile complete"
 echo
 
 echo "Testing graphical program"
-./target/debug/gobble $TERM -e echo Close this terminal
+./target/debug/gobble $TERM -e sh -c 'echo Close this terminal; exec sh'
 echo "Test complete"
 echo
 
@@ -31,7 +31,7 @@ echo "Test complete"
 echo
 
 echo "Testing simulated Wayland"
-WAYLAND_DISPLAY=test ./target/debug/gobble $TERM -e echo Close this terminal
+WAYLAND_DISPLAY=test ./target/debug/gobble $TERM -e sh -c 'echo Close this terminal; exec sh'
 echo "Test complete"
 echo
 
@@ -44,7 +44,7 @@ echo "Test complete"
 echo
 
 echo "Overlap mode test"
-./target/debug/gobble -o $TERM -e echo Close this terminal
+./target/debug/gobble -o $TERM -e sh -c 'echo Close this terminal; exec sh'
 echo "Test complete"
 echo
 
