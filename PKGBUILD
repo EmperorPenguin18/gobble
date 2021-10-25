@@ -1,21 +1,21 @@
-pkgname='gobble'
+pkgname=gobble
 pkgver=1.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Window swallowing on any WM'
-arch=('x86_64')
 url='https://github.com/EmperorPenguin18/gobble/'
+source=("$pkgname-$pkgver.tar.gz::https://github.com/EmperorPenguin18/gobble/archive/refs/tags/$pkgver.tar.gz")
+arch=('x86_64')
 license=('GPL3')
+makedepends=('cargo')
 depends=('libxcb')
-makedepends=('rust')
+sha256sums=('a2fef6f612950cdc0595c39b7688bfb10300a10dfd4738d4e94ba979531dcc61')
 
 build () {
-  cd $startdir
-  make
-  mv target/release/gobble $srcdir/gobble
+  cd "$srcdir/$pkgname-$pkgver"
+  cargo build --release --target-dir target
 }
 
 package () {
-  install -Dm644 $startdir/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  mkdir -p "$pkgdir/usr/bin"
-  install -Dm755 $srcdir/gobble "$pkgdir/usr/bin/gobble"
+  cd "$srcdir/$pkgname-$pkgver"
+  install -Dm755 target/release/gobble -t "$pkgdir/usr/bin"
 }
