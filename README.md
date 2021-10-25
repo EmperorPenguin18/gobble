@@ -3,8 +3,6 @@ Rust rewrite of Devour
 
 Gobble hides your current window before launching an external program and unhides it after quitting. Useful in terminals and file managers to keep your screen uncluttered.
 
-Currently only works with X but I would like to add Wayland support in the future.
-
 ## Installation
 
 Arch
@@ -15,6 +13,7 @@ cd gobble
 makepkg
 pacman -U gobble-* #as root
 ```
+Or just install from the [AUR](https://aur.archlinux.org/packages/gobble)
 
 Other Linux
 
@@ -30,6 +29,29 @@ make install #as root
 ```
 gobble CMD ...
 ```
+Read the man page for more info
+
+## Pro Tip
+
+To automate using gobble:
+
+Find and edit your shell rc (Usually ~/.bashrc)
+
+Add this to it:
+
+`alias mpv='gobble mpv'`
+
+`alias vimiv='gobble vimiv'`
+
+for example to automatically swallow when you open something in mpv or vimiv from CLI.
+
+In pcmanfm (and probably other gui file managers):  you can right click on a file -> open with -> custom command line. Under command line to execute:
+
+`gobble mpv %f`
+
+Enter 'mpv' in 'Application name (optional, set it to keep association)'.
+
+Then check 'Set selected application as default for this file type', and click ok.
 
 ## Uninstallation
 

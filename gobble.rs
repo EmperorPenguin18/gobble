@@ -14,7 +14,9 @@ fn main() -> Result<(), anyhow::Error> {
         let win = xcb::get_input_focus(&conn).get_reply()?.focus();
 
         // ensure child was spawned before we hide the window
-        let mut child = command(&args)?;
+        let mut child: process::Child;
+        if args.len() > 1 { child = command(&args)?; }
+        else { process::exit(0); }
 
         xcb::unmap_window_checked(&conn, win).request_check()?;
         conn.flush();
