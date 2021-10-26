@@ -10,8 +10,7 @@ Arch
 ```
 git clone https://github.com/EmperorPenguin18/gobble
 cd gobble
-makepkg
-pacman -U gobble-* #as root
+makepkg -si
 ```
 Or just install from the [AUR](https://aur.archlinux.org/packages/gobble)
 
