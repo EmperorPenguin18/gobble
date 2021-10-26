@@ -1,4 +1,6 @@
-pkgname='gobble'
+# Maintainer: Sebastien MacDougall-Landry
+
+pkgname=gobble
 pkgver=1.2
 pkgrel=1
 pkgdesc='Window swallowing on any WM'
