@@ -62,7 +62,7 @@ fn gobble_on_wayland(args: &[String]) -> Result<i32, anyhow::Error> {
 
 fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Error> {
     let (conn, screen_num) = Connection::connect(None)?;
-    let win = conn
+    let parent_window = conn
         .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
         .focus();
     Ok(if flag_overlap {
@@ -75,7 +75,7 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
 
         let translate = conn.wait_for_reply(
             conn.send_request(&x::TranslateCoordinates {
-                src_window: win,
+                src_window: parent_window,
                 dst_window: conn
                     .get_setup()
                     .roots()
@@ -87,7 +87,7 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
             }),
         )?; //Translates relative position to absolute position
         let geometry = conn.wait_for_reply(conn.send_request(&x::GetGeometry {
-            drawable: x::Drawable::Window(win),
+            drawable: x::Drawable::Window(parent_window),
         }))?;
         let values = [
             x::ConfigWindow::X(i32::from(translate.dst_x())),
@@ -96,16 +96,16 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
             x::ConfigWindow::Height(geometry.height().into()),
         ];
 
-        let mut newwin = conn
+        let mut child_window = conn
             .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
             .focus();
-        while win == newwin {
-            newwin = conn
+        while parent_window == child_window {
+            child_window = conn
                 .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
                 .focus();
         }
         conn.send_request_checked(&x::ConfigureWindow {
-            window: newwin,
+            window: child_window,
             value_list: &values,
         });
 
@@ -119,13 +119,18 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
             process::exit(0);
         }
 
-        conn.send_request_checked(&x::UnmapWindow { window: win });
+        conn.send_request(&x::UnmapWindow {
+            window: parent_window,
+        });
         let _ = conn.flush();
 
         let exit_code = child.wait()?.code().unwrap_or(1);
 
-        conn.send_request_checked(&x::MapWindow { window: win });
+        conn.send_request(&x::MapWindow {
+            window: parent_window,
+        });
         let _ = conn.flush();
+
         exit_code
     })
 }
