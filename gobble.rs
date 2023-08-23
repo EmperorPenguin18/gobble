@@ -119,17 +119,18 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
             process::exit(0);
         }
 
-        conn.send_request(&x::UnmapWindow {
+        let unmap_attempt = conn.send_request_checked(&x::UnmapWindow {
             window: parent_window,
         });
-        let _ = conn.flush();
+        conn.check_request(unmap_attempt)?;
 
         let exit_code = child.wait()?.code().unwrap_or(1);
 
-        conn.send_request(&x::MapWindow {
+        let map_attempt = conn.send_request_checked(&x::MapWindow {
             window: parent_window,
         });
-        let _ = conn.flush();
+        println!("Un-Gobbling.. Bye!");
+        conn.check_request(map_attempt)?;
 
         exit_code
     })
