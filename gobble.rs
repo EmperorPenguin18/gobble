@@ -1,8 +1,10 @@
 //Gobble by Sebastien MacDougall-Landry
 //License is available at
 //https://github.com/EmperorPenguin18/gobble/blob/main/LICENSE
+extern crate xcb;
 
 use std::{env, process};
+use xcb::{x, Connection};
 
 fn main() -> Result<(), anyhow::Error> {
     let mut args: Vec<String> = env::args().collect();
@@ -47,8 +49,10 @@ fn main() -> Result<(), anyhow::Error> {
         0
     } else if wayland == None {
         // X11
-        let (conn, screen_num) = xcb::Connection::connect(None)?;
-        let win = xcb::get_input_focus(&conn).get_reply()?.focus();
+        let (conn, screen_num) = Connection::connect(None)?;
+        let win = conn
+            .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
+            .focus();
         if flag_overlap == false {
             // ensure child was spawned before we hide the window
             let mut child: process::Child;
@@ -57,14 +61,14 @@ fn main() -> Result<(), anyhow::Error> {
             } else {
                 process::exit(0);
             }
-            
-            xcb::unmap_window_checked(&conn, win).request_check()?;
-            conn.flush();
+
+            conn.send_request_checked(&x::UnmapWindow { window: win });
+            let _ = conn.flush();
 
             let exit_code = child.wait()?.code().unwrap_or(1);
 
-            xcb::map_window_checked(&conn, win).request_check()?;
-            conn.flush();
+            conn.send_request_checked(&x::MapWindow { window: win });
+            let _ = conn.flush();
             exit_code
         } else {
             let mut child: process::Child;
@@ -74,31 +78,41 @@ fn main() -> Result<(), anyhow::Error> {
                 process::exit(0);
             }
 
-            let translate = xcb::translate_coordinates(
-                &conn,
-                win,
-                conn.get_setup()
-                    .roots()
-                    .nth(screen_num as usize)
-                    .unwrap()
-                    .root(),
-                0,
-                0,
-            )
-            .get_reply()?; //Translates relative position to absolute position
-            let geometry = xcb::get_geometry(&conn, win).get_reply()?;
-            let values = &vec![
-                (xcb::CONFIG_WINDOW_X as u16, translate.dst_x() as u32),
-                (xcb::CONFIG_WINDOW_Y as u16, translate.dst_y() as u32),
-                (xcb::CONFIG_WINDOW_WIDTH as u16, geometry.width() as u32),
-                (xcb::CONFIG_WINDOW_HEIGHT as u16, geometry.height() as u32),
+            let translate = conn.wait_for_reply(
+                conn.send_request(&x::TranslateCoordinates {
+                    src_window: win,
+                    dst_window: conn
+                        .get_setup()
+                        .roots()
+                        .nth(screen_num as usize)
+                        .unwrap()
+                        .root(),
+                    src_x: 0,
+                    src_y: 0,
+                }),
+            )?; //Translates relative position to absolute position
+            let geometry = conn.wait_for_reply(conn.send_request(&x::GetGeometry {
+                drawable: x::Drawable::Window(win),
+            }))?;
+            let values = [
+                x::ConfigWindow::X((translate.dst_x() as i32).into()).into(),
+                x::ConfigWindow::Y((translate.dst_y() as i32).into()).into(),
+                x::ConfigWindow::Width((geometry.width() as u16).into()).into(),
+                x::ConfigWindow::Height((geometry.height() as u16).into()).into(),
             ];
 
-            let mut newwin = xcb::get_input_focus(&conn).get_reply()?.focus();
+            let mut newwin = conn
+                .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
+                .focus();
             while win == newwin {
-                newwin = xcb::get_input_focus(&conn).get_reply()?.focus();
+                newwin = conn
+                    .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
+                    .focus();
             }
-            xcb::configure_window_checked(&conn, newwin, values).request_check()?;
+            conn.send_request_checked(&x::ConfigureWindow {
+                window: newwin,
+                value_list: &values,
+            });
 
             child.wait()?.code().unwrap_or(1)
         }
@@ -106,14 +120,12 @@ fn main() -> Result<(), anyhow::Error> {
         // Wayland
         command(&args)?.wait()?.code().unwrap_or(1)
     };
-    
+
     process::exit(exit_code);
 }
 
 fn command(args: &[String]) -> Result<process::Child, anyhow::Error> {
-    let child = process::Command::new(&args[1])
-        .args(&args[2..])
-        .spawn()?;
-    
+    let child = process::Command::new(&args[1]).args(&args[2..]).spawn()?;
+
     Ok(child)
 }
