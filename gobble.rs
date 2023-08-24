@@ -1,9 +1,9 @@
 //Gobble by Sebastien MacDougall-Landry
 //License is available at
 //https://github.com/EmperorPenguin18/gobble/blob/main/LICENSE
-extern crate xcb;
 
-use std::{env, process};
+extern crate xcb;
+use std::{env, process, time};
 use xcb::{x, Connection};
 
 fn main() -> Result<(), anyhow::Error> {
@@ -65,14 +65,31 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
     let parent_window = conn
         .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
         .focus();
-    Ok(if flag_overlap {
-        let mut child: process::Child;
-        if args.len() > 1 {
-            child = command(args)?;
-        } else {
-            process::exit(0);
+    // ensure child was spawned before we hide the window
+    let mut child: process::Child;
+    if args.len() > 1 {
+        child = command(args)?;
+    } else {
+        process::exit(0);
+    }
+    // If gobble opens a terminal application, it shouldn't hide
+    let start = time::Instant::now();
+    let mut child_window = conn
+        .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
+        .focus();
+    while parent_window == child_window {
+        // Check timeout or if child already exited
+        if start.elapsed().as_secs() == 5 || child.try_wait()?.is_some() {
+            let exit_code = child.wait()?.code().unwrap_or(1);
+            process::exit(exit_code);
         }
 
+        child_window = conn
+            .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
+            .focus();
+    }
+    // Overlap mode
+    Ok(if flag_overlap {
         let translate = conn.wait_for_reply(
             conn.send_request(&x::TranslateCoordinates {
                 src_window: parent_window,
@@ -96,29 +113,15 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
             x::ConfigWindow::Height(geometry.height().into()),
         ];
 
-        let mut child_window = conn
-            .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
-            .focus();
-        while parent_window == child_window {
-            child_window = conn
-                .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
-                .focus();
-        }
-        conn.send_request_checked(&x::ConfigureWindow {
+        let cookie = conn.send_request_checked(&x::ConfigureWindow {
             window: child_window,
             value_list: &values,
         });
+        conn.check_request(cookie)?;
 
         child.wait()?.code().unwrap_or(1)
+    // Default behaviour
     } else {
-        // ensure child was spawned before we hide the window
-        let mut child: process::Child;
-        if args.len() > 1 {
-            child = command(args)?;
-        } else {
-            process::exit(0);
-        }
-
         let unmap_attempt = conn.send_request_checked(&x::UnmapWindow {
             window: parent_window,
         });
@@ -129,7 +132,6 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
         let map_attempt = conn.send_request_checked(&x::MapWindow {
             window: parent_window,
         });
-        println!("Un-Gobbling.. Bye!");
         conn.check_request(map_attempt)?;
 
         exit_code

@@ -38,8 +38,10 @@ gobble - hide your current window while using an external program
 Gobble will exit with whatever code the passed command exited with, or if nothing is passed then 0.
 
 
-# BUGS
+# ISSUES
 Only works when using the X11 display server.
+
+Programs that fork immediately (for example as part of a daemon) don't behave right with gobble.
 
 # COPYRIGHT
 Copyright © 2021 Sebastien MacDougall-Landry. License GPLv3+: GNU GPL version 3 or later . This is free software: you are free to change and redistribute it. There is NO WARRANTY, to the extent permitted by law.
