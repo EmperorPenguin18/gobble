@@ -44,7 +44,7 @@ fn main() -> Result<(), anyhow::Error> {
         println!("See the manual for more information");
         0
     } else if flag_version {
-        println!("gobble v1.2");
+        println!("gobble v1.3");
         println!("See https://github.com/EmperorPenguin18/gobble/releases for more info");
         0
     } else if wayland.is_none() {
