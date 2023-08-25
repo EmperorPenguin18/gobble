@@ -10,7 +10,7 @@ arch=('x86_64')
 license=('GPL3')
 makedepends=('cargo' 'pandoc')
 depends=('libxcb')
-sha256sums=('')
+sha256sums=('613ad939bef746d9a196ed3587011aabb372abe11c3ac0813dd440cdd3c7f4bf')
 
 build () {
   cd "$srcdir/$pkgname-$pkgver"
