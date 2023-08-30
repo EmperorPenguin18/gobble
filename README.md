@@ -5,7 +5,7 @@ Gobble hides your current window before launching an external program and unhide
 
 ## Installation
 
-Arch
+### Arch
 
 ```
 git clone https://github.com/EmperorPenguin18/gobble
@@ -14,7 +14,11 @@ makepkg -si
 ```
 Or just install from the [AUR](https://aur.archlinux.org/packages/gobble)
 
-Other Linux
+### Nix and NixOS
+
+Install from [Nixpkgs Unstable](https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query=gobble).
+
+### Other Linux
 
 ```
 git clone https://github.com/EmperorPenguin18/gobble
