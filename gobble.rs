@@ -4,7 +4,7 @@
 
 extern crate xcb;
 use std::{env, process, time};
-use xcb::{x, Connection};
+use xcb::{x, Connection, Xid};
 
 fn main() -> Result<(), anyhow::Error> {
     let mut args: Vec<String> = env::args().collect();
@@ -87,6 +87,10 @@ fn gobble_on_x11(flag_overlap: bool, args: &[String]) -> Result<i32, anyhow::Err
         child_window = conn
             .wait_for_reply(conn.send_request(&x::GetInputFocus {}))?
             .focus();
+    }
+    // If parent is nothing then skip
+    if parent_window.resource_id() == 1 {
+        return Ok(child.wait()?.code().unwrap_or(1))
     }
     // Overlap mode
     Ok(if flag_overlap {

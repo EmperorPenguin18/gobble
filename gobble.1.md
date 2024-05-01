@@ -44,4 +44,4 @@ Only works when using the X11 display server.
 Programs that fork immediately (for example as part of a daemon) don't behave right with gobble.
 
 # COPYRIGHT
-Copyright © 2021-2023 Sebastien MacDougall-Landry. License GPLv3+: GNU GPL version 3 or later . This is free software: you are free to change and redistribute it. There is NO WARRANTY, to the extent permitted by law.
+Copyright © 2021-2024 Sebastien MacDougall-Landry. License GPLv3+: GNU GPL version 3 or later . This is free software: you are free to change and redistribute it. There is NO WARRANTY, to the extent permitted by law.
